@@ -1,0 +1,63 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM Router</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      textarea {
+        width: 100%;
+        height: 100px;
+      }
+      #result {
+        white-space: pre-wrap;
+        background-color: #f0f0f0;
+        padding: 10px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>LLM Router</h1>
+    <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
+    <br />
+    <button onclick="generateText()">Generate</button>
+    <div id="result"></div>
+    <div id="model"></div>
+
+    <script>
+      async function generateText() {
+        const prompt = document.getElementById("prompt").value;
+        const resultDiv = document.getElementById("result");
+        const modelDiv = document.getElementById("model");
+
+        resultDiv.textContent = "Generating...";
+        modelDiv.textContent = "";
+
+        try {
+          const response = await fetch("/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt }),
+          });
+
+          const data = await response.json();
+          resultDiv.textContent = data.result;
+          modelDiv.textContent = `Model used: ${data.model}`;
+        } catch (error) {
+          resultDiv.textContent = "An error occurred while generating text.";
+          console.error("Error:", error);
+        }
+      }
+    </script>
+  </body>
+</html>
